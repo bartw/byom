@@ -32,4 +32,8 @@ export default createGlobalStyle`
   a:hover {
     text-decoration: underline;
   }
+
+  p {
+    margin-bottom: 10px;
+  }
 `;

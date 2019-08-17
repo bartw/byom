@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^13.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.21",
     "@fortawesome/free-solid-svg-icons": "^5.10.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "contentful": "^7.9.1",
     "firebase": "^6.4.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
