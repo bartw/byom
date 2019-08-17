@@ -1,0 +1,10 @@
+.authentication {
+  margin-top: 10px;
+}
+
+.authentication button {
+  background-color: #748CAB;
+  border: 1px solid #748CAB;
+  border-radius: 4px;
+  color: #fff;
+}

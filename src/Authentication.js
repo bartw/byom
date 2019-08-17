@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { withFirebase } from "./Firebase";
+import "./Authentication.css";
 
 const Authentication = ({ firebase }) => {
   const [isSignedIn, setIsSignedIn] = useState(firebase.isSignedIn());
@@ -8,7 +9,7 @@ const Authentication = ({ firebase }) => {
   const signIn = () => firebase.signIn().then(() => updateIsSignedIn());
 
   return (
-    <div>
+    <div className="authentication">
       {isSignedIn ? (
         <div>
           <button onClick={signOut}>sign out</button>
