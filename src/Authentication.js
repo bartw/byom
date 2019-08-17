@@ -12,11 +12,15 @@ const Authentication = ({ firebase }) => {
     <div className="authentication">
       {isSignedIn ? (
         <div>
-          <button onClick={signOut}>sign out</button>
+          <button className="sign-out" onClick={signOut}>
+            sign out
+          </button>
         </div>
       ) : (
         <div>
-          <button onClick={signIn}>sign in</button>
+          <button className="sign-in" onClick={signIn}>
+            sign in
+          </button>
         </div>
       )}
     </div>
