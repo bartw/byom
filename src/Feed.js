@@ -10,8 +10,9 @@ const Feed = styled.div`
 `;
 
 const videos = [
+  { id: "uomdL-iv4-4", votes: 3284, artist: "Terror", title: "One With The Underdogs" },
   { id: "nqtobIpZt68", votes: 5642, artist: "$UICIDEBOY$", title: "Paris" },
-  { id: "iZr2x-BZ-tk", votes: 3284, artist: "Aborted", title: "TerrorVision" },
+  { id: "iZr2x-BZ-tk", votes: 666, artist: "Aborted", title: "TerrorVision" },
   { id: "oodecnyzohU", votes: 28, artist: "Beyoncé", title: "Sweet Dreams" },
   {
     id: "y55ewc09e4g",
