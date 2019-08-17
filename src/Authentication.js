@@ -1,27 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withFirebase } from "./Firebase";
-import "./Authentication.css";
+import styled from "styled-components";
+import { colors } from "./global-style";
+
+const SignOutButton = styled.button`
+  border: 2px solid ${colors.veryLight};
+  border-radius: 3px;
+  color: ${colors.veryLight};
+  font-size: 1.5em;
+  background-color: ${colors.contrast};
+`;
+
+const SignInButton = styled.button`
+  border: 2px solid ${colors.default};
+  border-radius: 3px;
+  color: ${colors.default};
+  font-size: 1.5em;
+  background-color: ${colors.contrast};
+`;
 
 const Authentication = ({ firebase }) => {
+  const [isInitialized, setIsInitialized] = useState(firebase.isInitialized());
   const [isSignedIn, setIsSignedIn] = useState(firebase.isSignedIn());
-  const updateIsSignedIn = () => setIsSignedIn(firebase.isSignedIn());
-  const signOut = () => firebase.signOut().then(() => updateIsSignedIn());
-  const signIn = () => firebase.signIn().then(() => updateIsSignedIn());
+
+  useEffect(() =>
+    firebase.addAuthenticationChangedHandler(() => {
+      setIsInitialized(firebase.isInitialized());
+      setIsSignedIn(firebase.isSignedIn());
+    })
+  );
 
   return (
     <div className="authentication">
-      {isSignedIn ? (
-        <div>
-          <button className="sign-out" onClick={signOut}>
-            sign out
-          </button>
-        </div>
-      ) : (
-        <div>
-          <button className="sign-in" onClick={signIn}>
-            sign in
-          </button>
-        </div>
+      {isInitialized && isSignedIn && (
+        <SignOutButton onClick={firebase.signOut}>sign out</SignOutButton>
+      )}
+      {isInitialized && !isSignedIn && (
+        <SignInButton onClick={firebase.signIn}>sign in</SignInButton>
       )}
     </div>
   );

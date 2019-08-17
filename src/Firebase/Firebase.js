@@ -15,12 +15,19 @@ class Firebase {
 
     this.auth = app.auth();
     this.provider = new app.auth.FacebookAuthProvider();
+    this.initialized = false;
     this.user = null;
+    this.authenticationChangedHandlers = [];
     this.auth.onAuthStateChanged(user => {
+      this.initialized = true;
       user ? (this.user = user) : (this.user = null);
+      this.authenticationChangedHandlers.forEach(handler => {
+        handler();
+      });
     });
   }
 
+  isInitialized = () => this.initialized;
   isSignedIn = () => !!this.user;
   signIn = () =>
     this.auth
@@ -35,6 +42,17 @@ class Firebase {
     this.auth.signOut().then(() => {
       this.user = null;
     });
+  addAuthenticationChangedHandler = handler => {
+    this.authenticationChangedHandlers = [
+      ...this.authenticationChangedHandlers,
+      handler
+    ];
+    return () => {
+      this.authenticationChangedHandlers = this.authenticationChangedHandlers.filter(
+        h => h !== handler
+      );
+    };
+  };
 }
 
 export default Firebase;
