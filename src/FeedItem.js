@@ -5,16 +5,30 @@ import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import { colors } from "./global-style";
 
 const FeedItem = styled.div`
-  margin: 10px;
+  margin-top: 10px;
   padding: 10px;
   background-color: ${colors.contrast};
   color: ${colors.default};
+  width: 70%;
 `;
 
 const Title = styled.h1``;
 
-const Video = styled.iframe`
+const VideoContainer = styled.div`
   margin-top: 10px;
+  width: 100%;
+  padding-top: 50%;
+  position: relative;
+`;
+
+const Video = styled.iframe`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
 `;
 
 const VoteButtons = styled.div`
@@ -41,7 +55,9 @@ export default ({ id, artist, title, votes }) => (
     <Title>
       {artist} - {title}
     </Title>
-    <Video title="video" src={`https://www.youtube.com/embed/${id}`} />
+    <VideoContainer>
+      <Video title="video" src={`https://www.youtube.com/embed/${id}`} />
+    </VideoContainer>
     <VoteButtons>
       <VoteButton>
         <FontAwesomeIcon icon={faThumbsUp} fixedWidth />

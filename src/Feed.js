@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { withFirebase } from "./Firebase";
 import FeedItem from "./FeedItem";
+import AddFeedItem from "./AddFeedItem";
 
 const Feed = styled.div`
   display: flex;
@@ -9,23 +11,26 @@ const Feed = styled.div`
   align-items: center;
 `;
 
-const videos = [
-  { id: "uomdL-iv4-4", votes: 3284, artist: "Terror", title: "One With The Underdogs" },
-  { id: "nqtobIpZt68", votes: 5642, artist: "$UICIDEBOY$", title: "Paris" },
-  { id: "iZr2x-BZ-tk", votes: 666, artist: "Aborted", title: "TerrorVision" },
-  { id: "oodecnyzohU", votes: 69, artist: "Beyoncé", title: "Sweet Dreams" },
-  {
-    id: "y55ewc09e4g",
-    votes: 9321,
-    artist: "Thunderdome",
-    title: "Zombie Attack"
-  },
-  { id: "24xpoanZakA", votes: 420, artist: "Sjaak", title: "Tractor" }
-];
+const FeedComponent = ({ firebase }) => {
+  const [feed, setFeed] = useState([]);
+  useEffect(() => firebase.feed(setFeed), [firebase]);
 
-export default () => {
-  const videoComponents = videos.map(({ id, artist, title, votes }) => (
-    <FeedItem key={id} id={id} artist={artist} title={title} votes={votes} />
+  const addFeedItem = ({ artist, title, youtubeId }) => {
+    if (artist && title && youtubeId) {
+      firebase.addFeedItem({ artist, title, youtubeId, votes: 0 });
+    }
+  };
+  const feedItems = feed.map(({ youtubeId, artist, title, votes }) => (
+    <FeedItem key={youtubeId} id={youtubeId} artist={artist} title={title} votes={votes || 0} />
   ));
-  return <Feed>{videoComponents}</Feed>;
+  return (
+    <Feed>
+      {[
+        <AddFeedItem key="add-feed-item" addFeedItem={addFeedItem} />,
+        ...feedItems
+      ]}
+    </Feed>
+  );
 };
+
+export default withFirebase(FeedComponent);

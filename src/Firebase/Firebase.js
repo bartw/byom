@@ -1,5 +1,6 @@
 import app from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,34 +15,51 @@ class Firebase {
     app.initializeApp(config);
 
     this.auth = app.auth();
+    this.db = app.firestore();
+
     this.provider = new app.auth.FacebookAuthProvider();
+
     this.initialized = false;
     this.user = null;
+    this.userRef = null;
     this.authenticationChangedHandlers = [];
+
     this.auth.onAuthStateChanged(user => {
       this.initialized = true;
-      user ? (this.user = user) : (this.user = null);
-      this.authenticationChangedHandlers.forEach(handler => {
-        handler();
-      });
+
+      if (!user) {
+        this.user = null;
+        this.authenticationChangedHandlers.forEach(handler => handler());
+        return;
+      }
+
+      const { uid, displayName } = user;
+      const userRef = this.db.collection("users").doc(uid);
+
+      userRef
+        .set({ name: user.displayName }, { merge: true })
+        .then(() => {
+          this.user = { uid, name: displayName, userRef };
+          this.authenticationChangedHandlers.forEach(handler => handler());
+        })
+        .catch(error => console.error(error));
     });
   }
 
   isInitialized = () => this.initialized;
+
   isSignedIn = () => !!this.user;
+
   signIn = () =>
     this.auth
       .signInWithPopup(this.provider)
-      .then(({ user }) => {
-        this.user = user;
-      })
-      .catch(error => {
-        console.log(error);
-      });
+      .catch(error => console.error(error));
+
   signOut = () =>
     this.auth.signOut().then(() => {
       this.user = null;
     });
+
   addAuthenticationChangedHandler = handler => {
     this.authenticationChangedHandlers = [
       ...this.authenticationChangedHandlers,
@@ -52,6 +70,22 @@ class Firebase {
         h => h !== handler
       );
     };
+  };
+
+  feed = callback => {
+    if (!this.isSignedIn()) {
+      throw new Error("Unauthorized");
+    }
+    return this.user.userRef.onSnapshot(doc => callback(doc.data().feed || []));
+  };
+
+  addFeedItem = feedItem => {
+    if (!this.isSignedIn()) {
+      throw new Error("Unauthorized");
+    }
+    this.user.userRef.update({
+      feed: app.firestore.FieldValue.arrayUnion(feedItem)
+    });
   };
 }
 
